@@ -1,3 +1,4 @@
+
 import { Product, Category, FilterGroup } from "@/types";
 
 export const mockProducts: Product[] = [
@@ -146,9 +147,7 @@ export const popularCategories: Category[] = [
   { id: "c5", name: "Beauty", icon: "💄", count: 197 },
   { id: "c6", name: "Toys", icon: "🧸", count: 86 },
   { id: "c7", name: "Books", icon: "📚", count: 113 },
-  { id: "c8", name: "Sports", icon: "⚽", count: 94 },
-  { id: "c9", name: "Fitness Tracker Smart Watch", icon: "⌚", count: 42 },
-  { id: "c10", name: "Wireless Bluetooth Earbuds", icon: "🎧", count: 67 }
+  { id: "c8", name: "Sports", icon: "⚽", count: 94 }
 ];
 
 export const filterGroups: FilterGroup[] = [
