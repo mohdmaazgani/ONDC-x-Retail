@@ -4,6 +4,7 @@ import CategorySection from "@/components/home/CategorySection";
 import TrendingSection from "@/components/home/TrendingSection";
 import AIRecommendationSection from "@/components/home/AIRecommendationSection";
 import LocalSellerSection from "@/components/home/LocalSellerSection";
+import Featured3DSection from "@/components/home/Featured3DSection";
 import { mockProducts, popularCategories } from "@/data/mockData";
 
 const Index = () => {
@@ -16,6 +17,7 @@ const Index = () => {
       <HeroSection />
       <CategorySection categories={popularCategories} />
       <TrendingSection products={trendingProducts} />
+      <Featured3DSection />
       <LocalSellerSection />
       <AIRecommendationSection products={aiRecommendedProducts} />
     </div>

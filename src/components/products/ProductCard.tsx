@@ -1,7 +1,10 @@
 
-import { Star } from "lucide-react";
+import { Star, View3d } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ProductCardProps {
   product: Product;
@@ -24,6 +27,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Seller Badge */}
       <div className="absolute top-2 right-2 z-10 bg-white/80 text-neutral-dark text-xs px-2 py-1 rounded-full backdrop-blur-sm">
         {product.seller.name}
+      </div>
+
+      {/* 3D View Button */}
+      <div className="absolute top-12 right-2 z-10">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to={`/product/3d/${product.id}`}>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm"
+                >
+                  <View3d className="h-4 w-4" />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>View in 3D</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
       {/* Image */}
