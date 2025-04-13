@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, PresentationControls, Environment, Float } from "@react-three/drei";
-import { Mesh } from "three";
+import { Mesh, Group } from "three";
 
 interface ModelProps {
   color?: string;
@@ -28,16 +28,16 @@ const CubeModel = ({ color = "#9b87f5" }: ModelProps) => {
 
 // Simple product box model
 const ProductBox = ({ color = "#9b87f5" }: ModelProps) => {
-  const meshRef = useRef<Mesh>(null);
+  const groupRef = useRef<Group>(null);
 
   useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.3;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.3;
     }
   });
 
   return (
-    <group ref={meshRef}>
+    <group ref={groupRef}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.5, 0.8, 1]} />
         <meshStandardMaterial color={color} />
