@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -25,12 +26,32 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#9b87f5',
+					light: '#e5deff',
+					dark: '#7E69AB',
+					foreground: '#ffffff'
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: '#f97316',
+					light: '#fde1d3',
+					dark: '#ea580c',
+					foreground: '#ffffff'
+				},
+				accent: {
+					DEFAULT: '#0EA5E9',
+					light: '#d3e4fd',
+					dark: '#0284c7',
+					foreground: '#ffffff'
+				},
+				neutral: {
+					DEFAULT: '#8E9196',
+					light: '#f1f0fb',
+					dark: '#403E43',
+				},
+				success: {
+					DEFAULT: '#10b981',
+					light: '#F2FCE2',
+					foreground: '#ffffff'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -39,10 +60,6 @@ export default {
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
-				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -84,11 +101,31 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
+				},
+				'fadeIn': {
+					from: { opacity: '0' },
+					to: { opacity: '1' }
+				},
+				'slideUp': {
+					from: { transform: 'translateY(10px)', opacity: '0' },
+					to: { transform: 'translateY(0)', opacity: '1' }
+				},
+				'slideDown': {
+					from: { transform: 'translateY(-10px)', opacity: '0' },
+					to: { transform: 'translateY(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'fadeIn': 'fadeIn 0.5s ease-out',
+				'slideUp': 'slideUp 0.5s ease-out',
+				'slideDown': 'slideDown 0.5s ease-out'
 			}
 		}
 	},
