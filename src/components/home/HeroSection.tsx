@@ -1,10 +1,108 @@
-
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, Mic, Camera } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const { toast } = useToast();
+  
+  // Setup speech recognition
+  useEffect(() => {
+    // Check if browser supports SpeechRecognition
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      // Use the appropriate constructor
+      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognitionConstructor();
+      
+      // Configure recognition
+      const recognition = recognitionRef.current;
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      // Set up event handlers
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setSearchTerm(transcript);
+        setIsRecording(false);
+        toast({
+          title: "Voice captured",
+          description: `Searching for '${transcript}'`,
+        });
+      };
+      
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+        toast({
+          title: "Error",
+          description: "Failed to recognize speech. Please try again.",
+          variant: "destructive"
+        });
+      };
+      
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+    }
+    
+    // Cleanup
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {
+          console.error("Error stopping recognition", e);
+        }
+      }
+    };
+  }, [toast]);
+  
+  // Voice search handler
+  const handleVoiceSearch = () => {
+    if (!recognitionRef.current) {
+      toast({
+        title: "Not supported",
+        description: "Voice recognition is not supported in your browser.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      if (!isRecording) {
+        setIsRecording(true);
+        recognitionRef.current.start();
+        toast({
+          title: "Listening...",
+          description: "Please speak now",
+        });
+      } else {
+        setIsRecording(false);
+        recognitionRef.current.stop();
+      }
+    } catch (error) {
+      console.error("Speech recognition error:", error);
+      setIsRecording(false);
+      toast({
+        title: "Error",
+        description: "An error occurred with voice recognition",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Placeholder for image search
+  const handleImageSearch = () => {
+    toast({
+      title: "Image Search",
+      description: "Image search feature coming soon!",
+    });
+  };
   
   return (
     <section className="relative bg-gradient-to-br from-primary-light via-white to-secondary-light overflow-hidden">
@@ -30,10 +128,18 @@ const HeroSection = () => {
             </div>
             
             <div className="flex">
-              <Button variant="ghost" size="icon" className="rounded-full h-12 w-12">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={cn(
+                  "rounded-full h-12 w-12",
+                  isRecording && "bg-red-100 text-red-500 animate-pulse"
+                )}
+                onClick={handleVoiceSearch}
+              >
                 <Mic className="h-5 w-5 text-primary" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-12 w-12">
+              <Button variant="ghost" size="icon" className="rounded-full h-12 w-12" onClick={handleImageSearch}>
                 <Camera className="h-5 w-5 text-primary" />
               </Button>
               <Button className="rounded-full h-12 px-6 bg-primary hover:bg-primary-dark">

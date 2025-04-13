@@ -17,6 +17,59 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  // Setup speech recognition
+  useEffect(() => {
+    // Check if browser supports SpeechRecognition
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      // Use the appropriate constructor
+      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognitionConstructor();
+      
+      // Configure recognition
+      const recognition = recognitionRef.current;
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      // Set up event handlers
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setSearchTerm(transcript);
+        setIsRecording(false);
+        toast({
+          title: "Voice captured",
+          description: `Searching for '${transcript}'`,
+        });
+      };
+      
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+        toast({
+          title: "Error",
+          description: "Failed to recognize speech. Please try again.",
+          variant: "destructive"
+        });
+      };
+      
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+    }
+    
+    // Cleanup
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {
+          console.error("Error stopping recognition", e);
+        }
+      }
+    };
+  }, [toast]);
 
   // Mock suggestions based on search term
   useEffect(() => {
@@ -41,19 +94,38 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     }
   }, [isOpen]);
 
-  // Mock voice search
+  // Real voice search implementation
   const handleVoiceSearch = () => {
-    setIsRecording(true);
-    
-    // Simulate voice recognition after 2 seconds
-    setTimeout(() => {
-      setIsRecording(false);
-      setSearchTerm("voice search example");
+    if (!recognitionRef.current) {
       toast({
-        title: "Voice captured",
-        description: "Searching for 'voice search example'",
+        title: "Not supported",
+        description: "Voice recognition is not supported in your browser.",
+        variant: "destructive"
       });
-    }, 2000);
+      return;
+    }
+    
+    try {
+      if (!isRecording) {
+        setIsRecording(true);
+        recognitionRef.current.start();
+        toast({
+          title: "Listening...",
+          description: "Please speak now",
+        });
+      } else {
+        setIsRecording(false);
+        recognitionRef.current.stop();
+      }
+    } catch (error) {
+      console.error("Speech recognition error:", error);
+      setIsRecording(false);
+      toast({
+        title: "Error",
+        description: "An error occurred with voice recognition",
+        variant: "destructive"
+      });
+    }
   };
 
   // Mock image search
