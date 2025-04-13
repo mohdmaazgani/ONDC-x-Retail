@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { toast } = useToast();
   
@@ -21,32 +22,54 @@ const HeroSection = () => {
       // Configure recognition
       const recognition = recognitionRef.current;
       recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
       
       // Set up event handlers
+      recognition.onstart = () => {
+        setIsListening(true);
+        console.log("Speech recognition started");
+      };
+      
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
+        console.log("Got result:", transcript);
         setSearchTerm(transcript);
-        setIsRecording(false);
-        toast({
-          title: "Voice captured",
-          description: `Searching for '${transcript}'`,
-        });
+        
+        // Only show toast and stop recording if this is a final result
+        if (event.results[0].isFinal) {
+          setIsRecording(false);
+          toast({
+            title: "Voice captured",
+            description: `Searching for '${transcript}'`,
+          });
+        }
       };
       
       recognition.onerror = (event) => {
         console.error("Speech recognition error", event.error);
         setIsRecording(false);
-        toast({
-          title: "Error",
-          description: "Failed to recognize speech. Please try again.",
-          variant: "destructive"
-        });
+        setIsListening(false);
+        
+        if (event.error === 'no-speech') {
+          toast({
+            title: "No speech detected",
+            description: "Please speak clearly and try again.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: `Recognition error: ${event.error}`,
+            variant: "destructive"
+          });
+        }
       };
       
       recognition.onend = () => {
+        console.log("Speech recognition ended");
         setIsRecording(false);
+        setIsListening(false);
       };
     }
     
@@ -88,6 +111,7 @@ const HeroSection = () => {
     } catch (error) {
       console.error("Speech recognition error:", error);
       setIsRecording(false);
+      setIsListening(false);
       toast({
         title: "Error",
         description: "An error occurred with voice recognition",
@@ -136,13 +160,24 @@ const HeroSection = () => {
                   isRecording && "bg-red-100 text-red-500 animate-pulse"
                 )}
                 onClick={handleVoiceSearch}
+                aria-label={isRecording ? "Stop voice search" : "Start voice search"}
               >
                 <Mic className="h-5 w-5 text-primary" />
+                {isListening && <span className="sr-only">Listening...</span>}
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-12 w-12" onClick={handleImageSearch}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-12 w-12" 
+                onClick={handleImageSearch}
+                aria-label="Search by image"
+              >
                 <Camera className="h-5 w-5 text-primary" />
               </Button>
-              <Button className="rounded-full h-12 px-6 bg-primary hover:bg-primary-dark">
+              <Button 
+                className="rounded-full h-12 px-6 bg-primary hover:bg-primary-dark"
+                aria-label="Search"
+              >
                 Search
               </Button>
             </div>

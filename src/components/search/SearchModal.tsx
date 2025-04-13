@@ -14,6 +14,7 @@ interface SearchModalProps {
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -30,32 +31,59 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
       // Configure recognition
       const recognition = recognitionRef.current;
       recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
       
       // Set up event handlers
+      recognition.onstart = () => {
+        setIsListening(true);
+        console.log("Speech recognition started in modal");
+      };
+      
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
+        console.log("Got result in modal:", transcript);
         setSearchTerm(transcript);
-        setIsRecording(false);
-        toast({
-          title: "Voice captured",
-          description: `Searching for '${transcript}'`,
-        });
+        
+        // Focus the input to ensure the UI shows the updated text
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+        
+        // Only show toast and stop recording if this is a final result
+        if (event.results[0].isFinal) {
+          setIsRecording(false);
+          toast({
+            title: "Voice captured",
+            description: `Searching for '${transcript}'`,
+          });
+        }
       };
       
       recognition.onerror = (event) => {
-        console.error("Speech recognition error", event.error);
+        console.error("Speech recognition error in modal", event.error);
         setIsRecording(false);
-        toast({
-          title: "Error",
-          description: "Failed to recognize speech. Please try again.",
-          variant: "destructive"
-        });
+        setIsListening(false);
+        
+        if (event.error === 'no-speech') {
+          toast({
+            title: "No speech detected",
+            description: "Please speak clearly and try again.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: `Recognition error: ${event.error}`,
+            variant: "destructive"
+          });
+        }
       };
       
       recognition.onend = () => {
+        console.log("Speech recognition ended in modal");
         setIsRecording(false);
+        setIsListening(false);
       };
     }
     
@@ -92,9 +120,22 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+    
+    // Reset when modal is opened/closed
+    return () => {
+      if (recognitionRef.current && isRecording) {
+        try {
+          recognitionRef.current.abort();
+          setIsRecording(false);
+          setIsListening(false);
+        } catch (e) {
+          console.error("Error stopping recognition on modal close", e);
+        }
+      }
+    };
+  }, [isOpen, isRecording]);
 
-  // Real voice search implementation
+  // Voice search implementation
   const handleVoiceSearch = () => {
     if (!recognitionRef.current) {
       toast({
@@ -120,6 +161,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     } catch (error) {
       console.error("Speech recognition error:", error);
       setIsRecording(false);
+      setIsListening(false);
       toast({
         title: "Error",
         description: "An error occurred with voice recognition",
@@ -176,18 +218,23 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               size="icon" 
               variant="ghost" 
               className={cn(
-                "h-9 w-9 rounded-full",
+                "h-9 w-9 rounded-full relative",
                 isRecording && "bg-red-100 text-red-500 animate-pulse"
               )}
               onClick={handleVoiceSearch}
+              aria-label={isRecording ? "Stop voice search" : "Start voice search"}
             >
               <Mic className="h-5 w-5" />
+              {isListening && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+              )}
             </Button>
             <Button 
               size="icon" 
               variant="ghost" 
               className="h-9 w-9 rounded-full"
               onClick={handleImageSearch}
+              aria-label="Search by image"
             >
               <Camera className="h-5 w-5" />
             </Button>
@@ -196,6 +243,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               variant="ghost" 
               className="h-9 w-9 rounded-full"
               onClick={onClose}
+              aria-label="Close search"
             >
               <X className="h-5 w-5" />
             </Button>
