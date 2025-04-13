@@ -1,5 +1,5 @@
 
-import { Star, View3d } from "lucide-react";
+import { Star, View } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
@@ -40,7 +40,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   size="icon" 
                   className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm"
                 >
-                  <View3d className="h-4 w-4" />
+                  <View className="h-4 w-4" />
                 </Button>
               </Link>
             </TooltipTrigger>
