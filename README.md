@@ -1,38 +1,78 @@
-# 🛍️ ONDC-x-Retail
+# 🛍️ ONDC-x-Retail — Modern Retail Experience on the Open Network
 
-**ONDC-x-Retail** is a modern frontend web application built to showcase a retail experience powered by the Open Network for Digital Commerce (ONDC).  
-This project focuses on user-friendly design, responsiveness, and efficient performance — developed using **React, Vite, and ShadCN UI**.
+**ONDC-x-Retail** is a sleek, fast, and user-friendly web platform built to showcase a **modern retail storefront** powered by the **Open Network for Digital Commerce (ONDC)**.  
+The project focuses on seamless UI, responsive design, and easy scalability — designed entirely with **React + Vite + ShadCN UI** for a next-generation e-commerce experience.
 
----
-
-## 🚀 Features
-
-- ⚡ **Fast Performance** — Powered by Vite for instant build and reloads  
-- 🎨 **Modern UI** — Styled with ShadCN components and Tailwind CSS  
-- 🧩 **Modular Architecture** — Easy to scale and maintain  
-- 📱 **Responsive Design** — Fully optimized for mobile, tablet, and desktop  
-- 🌐 **Frontend-Only Application** — No backend dependencies  
+**Website link** — [https://ondc-x-retail.netlify.app](https://ondc-x-retail.netlify.app)
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Features
 
-| Category | Technology |
-|-----------|-------------|
-| **Framework** | React (with TypeScript) |
-| **Build Tool** | Vite |
-| **Styling** | Tailwind CSS, ShadCN/UI |
-| **Package Manager** | npm |
-| **Version Control** | Git + GitHub |
-| **Deployment** | Netlify |
+### 🛒 Retail Showcase
+- Intuitive and clean product presentation interface.  
+- Focused on accessibility and ease of navigation.
+
+### ⚡ Performance-Optimized
+- Built using **Vite**, ensuring lightning-fast load times and builds.  
+- Optimized bundles for efficient performance on all devices.
+
+### 🎨 Modern UI/UX
+- Styled with **Tailwind CSS** and **ShadCN UI** for an elegant, modern look.  
+- Responsive layouts that adapt perfectly to mobile, tablet, and desktop screens.
+
+### 🔗 ONDC-Ready Architecture
+- Structured for easy integration with future ONDC APIs and modules.  
+- Modular codebase for scalability and feature expansion.
 
 ---
 
-## 🧩 Project Setup
+## ⚙️ Tech Stack
 
-Clone the repository and install dependencies:
+| Category            | Technologies                        |
+| ------------------- | ----------------------------------- |
+| **Frontend**        | React + Vite + TypeScript           |
+| **Styling**         | Tailwind CSS + ShadCN UI            |
+| **Deployment**      | Netlify                             |
+| **Version Control** | Git + GitHub                        |
 
-```bash
-git clone https://github.com/mohdmaazgani/ONDC-x-Retail.git
-cd ONDC-x-Retail
-npm install
+---
+
+
+## 🧩 Folder Structure
+
+```
+ONDC-x-Retail/
+├── public/              # Static assets (images, icons, etc.)
+├── src/
+│   ├── components/      # UI and reusable React components
+│   ├── pages/           # Main application pages
+│   ├── hooks/           # Custom React hooks
+│   ├── assets/          # Static and media files
+│   └── main.tsx         # App entry point
+├── package.json
+└── vite.config.ts
+```
+
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+Feel free to open a PR or issue in this repository.
+
+---
+
+## 🧑‍💻 Author
+
+**Developed by:** [@mohdmaazgani](https://github.com/mohdmaazgani)
+✨ Passionate about building smart, user-centric solutions.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — free for use, modification, and distribution.
+
+
